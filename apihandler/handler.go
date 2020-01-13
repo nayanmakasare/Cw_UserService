@@ -24,7 +24,7 @@ type Server struct {
 
 //Helper function
 func(h *Server) ValidateUserInformation(user *pb.User) bool {
-	if(len(user.GoogleId) > 0 && len(user.Genre) > 0 && len(user.Language) > 0 && len(user.ContentType) > 0 && len(user.Email) > 0 && len(user.PhoneNumber) > 0){
+	if(len(user.GetGoogleId()) > 0 && len(user.GetGenre()) > 0 && len(user.GetLanguage()) > 0 && len(user.GetContentType()) > 0 && len(user.GetEmail()) > 0 && len(user.GetPhoneNumber()) > 0){
 		return true
 	}else {
 		return false
@@ -32,7 +32,7 @@ func(h *Server) ValidateUserInformation(user *pb.User) bool {
 }
 
 func (h *Server) CreateUser(ctx context.Context, req *pb.User) (*pb.CreateReponse, error) {
-	findResult := h.UserCollection.FindOne(context.Background(), bson.D{{"googleid", req.GoogleId}})
+	findResult := h.UserCollection.FindOne(context.Background(), bson.D{{"googleid", req.GetGoogleId()}})
 	if findResult.Err() != nil {
 		// means user is not present so add user in DB
 		if h.ValidateUserInformation(req) {

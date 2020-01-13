@@ -26,6 +26,10 @@ const (
 	schedularMongoHost = "mongodb://192.168.1.143:27017"
 	schedularRedisHost = "192.168.1.143:6379"
 	developmentMongoHost = "mongodb://dev-uni.cloudwalker.tv:6592"
+	grpc_port        = ":7769"
+	rest_port		 = ":7770"
+	srvCertFile = "cert/server.crt"
+	srvKeyFile  = "cert/server.key"
 )
 
 // private type for Context keys
@@ -115,7 +119,6 @@ func startRESTServer(address, grpcAddress, certFile string) error {
 	defer cancel()
 	mux := runtime.NewServeMux(runtime.WithIncomingHeaderMatcher(credMatcher))
 
-
 	_ , err := credentials.NewClientTLSFromFile(certFile, "")
 	if err != nil {
 		return fmt.Errorf("could not load TLS certificate: %s", err)
@@ -164,14 +167,9 @@ func main()  {
 	//grpcAddress := fmt.Sprintf("%s:%d", "cloudwalker.services.tv", 7771)
 	//restAddress := fmt.Sprintf("%s:%d", "cloudwalker.services.tv", 7772)
 
-	grpcAddress := fmt.Sprintf("%s:%d", "192.168.1.143", 7769)
-	restAddress := fmt.Sprintf("%s:%d", "192.168.1.143", 7770)
-	certFile := "cert/server.crt"
-	keyFile := "cert/server.key"
-
 	// fire the gRPC server in a goroutine
 	go func() {
-		err := startGRPCServer(grpcAddress, certFile, keyFile)
+		err := startGRPCServer(grpc_port, srvCertFile, srvKeyFile)
 		if err != nil {
 			log.Fatalf("failed to start gRPC server: %s", err)
 		}
@@ -180,7 +178,7 @@ func main()  {
 
 	// fire the REST server in a goroutine
 	go func() {
-		err := startRESTServer(restAddress, grpcAddress, certFile)
+		err := startRESTServer(rest_port, grpc_port, srvCertFile)
 		if err != nil {
 			log.Fatalf("failed to start gRPC server: %s", err)
 		}
