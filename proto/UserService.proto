@@ -1,0 +1,151 @@
+syntax = "proto3";
+
+
+package UserService;
+
+import   "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+
+
+service UserService {
+
+    rpc CreateUser(User) returns (CreateReponse) {
+        option (google.api.http) = {
+                post:"/createuser"
+                body: "*"
+        };
+    }
+    rpc UpdateUser(User) returns (UpdateResponse) {
+        option (google.api.http) = {
+                post:"/updateuser"
+                body: "*"
+        };
+    }
+
+
+    rpc DeleteUser(DeleteRequest) returns (DeleteReponse) {
+        option (google.api.http) = {
+                post:"/deleteuser"
+                body: "*"
+        };
+    }
+
+
+    rpc GetUser(GetRequest) returns (User) {
+        option (google.api.http) = {
+                post:"/getuser"
+                body: "*"
+        };
+    }
+
+
+
+    rpc LinkedTvDevice(TvDevice) returns (LinkedDeviceResponse) {
+        option (google.api.http) = {
+                post:"/linkedtvdevice"
+                body: "*"
+        };
+    }
+
+
+    rpc RemoveTvDevice(RemoveTvDeviceRequest) returns (RemoveTvDeviceResponse) {
+        option (google.api.http) = {
+                post:"/removetvdevice"
+                body: "*"
+        };
+    }
+
+    rpc GetLinkedDevices(GetRequest) returns (LinkedDeviceResponse) {
+        option (google.api.http) = {
+                post:"/getlinkeddevices"
+                body: "*"
+        };
+    }
+
+
+    rpc TileClick(stream TileInfo) returns (TileClickResponse){
+        option (google.api.http) = {
+                post:"/tileclick"
+                body: "*"
+        };
+    }
+
+    rpc TileSelect(stream TileInfo) returns (TileClickResponse){
+        option (google.api.http) = {
+                post:"/tileselect"
+                body: "*"
+        };
+    }
+}
+
+message TileInfo{
+    string tvEmac = 1;
+    string  tileId = 2;
+    google.protobuf.Timestamp eventTime = 4;
+}
+
+message TileClickResponse{
+    bool isRegistered = 1;
+}
+
+message RemoveTvDeviceRequest{
+    string googleId = 1;
+    string tvEmac  = 2;
+}
+
+message RemoveTvDeviceResponse{
+    bool isTvDeviceRemoved = 1;
+}
+
+message GetRequest{
+    string googleId = 1;
+}
+
+message DeleteRequest{
+    string googleId = 1;
+}
+
+message DeleteReponse{
+    bool isDeleted = 1;
+}
+
+message LinkedDeviceResponse{
+    bool isLinkedDeviceFetched = 1;
+    repeated LinkedDevice linkedDevices = 2;
+}
+
+
+message TvDevice{
+    string googleId = 1;
+    LinkedDevice linkedDevice = 2;
+}
+
+message UpdateResponse{
+    bool isUpdated = 1;
+}
+
+message CreateReponse{
+    bool isCreated = 1;
+}
+
+message User {
+    string name = 1;
+    string email = 2;
+    string phoneNumber = 3;
+    string googleId = 4;
+    repeated string genre = 5 ;
+    repeated string language = 6 ;
+    repeated string contentType = 7 ;
+    repeated LinkedDevice linkedDevices = 8;
+    google.protobuf.Timestamp createdAt = 9;
+    google.protobuf.Timestamp updatedAt = 10;
+}
+
+message LinkedDevice{
+    string tvEmac = 1;
+    string tvPanel  =2;
+    string tvBoard = 3;
+}
+
+
+
